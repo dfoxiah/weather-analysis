@@ -1,0 +1,48 @@
+﻿<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WeatherLab</title>
+    <link rel="stylesheet" href="{{ static('weather/css/style.css') }}" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand"><a href="{{ url('weather:index') }}">WeatherLab</a></div>
+      <form method="post" action="{{ url('weather:index') }}" class="header-search">
+        {{ csrf_input }}
+        <input
+          class="input"
+          type="text"
+          name="city"
+          placeholder="Поиск города"
+          value="{{ header_city }}"
+        />
+        {% for src in header_sources or [] %}
+          <input type="hidden" name="sources" value="{{ src.key }}" />
+        {% endfor %}
+        <button class="button small" type="submit">Найти</button>
+      </form>
+      <nav class="nav">
+        <a href="{{ url('weather:index') }}">Анализ</a>
+        <a href="{{ url('weather:history') }}">История</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      {% if messages %}
+        <div class="flash">
+          {% for message in messages %}
+            <div class="flash-item {{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+      Сервис учебного анализа погоды
+    </footer>
+  </body>
+</html>

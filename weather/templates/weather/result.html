@@ -1,0 +1,85 @@
+﻿{% extends 'weather/base.html' %}
+
+{% block content %}
+  <section class="card">
+    <h1>Результат анализа</h1>
+    <p class="muted">Город: {{ query.city }} · {{ query.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+
+    <div class="summary">
+      <div>
+        <span>Средняя температура</span>
+        <strong>{{ summary.avg_temp if summary.avg_temp is not none else '—' }} °C</strong>
+      </div>
+      <div>
+        <span>Разброс температур</span>
+        <strong>{{ summary.temp_spread if summary.temp_spread is not none else '—' }} °C</strong>
+      </div>
+      <div>
+        <span>Средняя влажность</span>
+        <strong>{{ summary.avg_humidity if summary.avg_humidity is not none else '—' }} %</strong>
+      </div>
+      <div>
+        <span>Средняя скорость ветра</span>
+        <strong>{{ summary.avg_wind if summary.avg_wind is not none else '—' }} км/ч</strong>
+      </div>
+      <div>
+        <span>Ощущается как</span>
+        <strong>{{ summary.avg_feels_like if summary.avg_feels_like is not none else '—' }} °C</strong>
+      </div>
+      <div>
+        <span>Среднее давление</span>
+        <strong>{{ summary.avg_pressure if summary.avg_pressure is not none else '—' }} гПа</strong>
+      </div>
+      <div>
+        <span>Средняя видимость</span>
+        <strong>{{ summary.avg_visibility if summary.avg_visibility is not none else '—' }} км</strong>
+      </div>
+      <div>
+        <span>Осадки (1 час)</span>
+        <strong>{{ summary.avg_precip if summary.avg_precip is not none else '—' }} мм</strong>
+      </div>
+      <div>
+        <span>Порывы ветра</span>
+        <strong>{{ summary.avg_gust if summary.avg_gust is not none else '—' }} км/ч</strong>
+      </div>
+      <div>
+        <span>Облачность</span>
+        <strong>{{ summary.avg_cloud if summary.avg_cloud is not none else '—' }} %</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="card secondary">
+    <h2>Данные по источникам</h2>
+    <div class="table">
+      <div class="table-row head">
+        <div>Источник</div>
+        <div>Температура</div>
+        <div>Влажность</div>
+        <div>Ветер</div>
+        <div>Порывы</div>
+        <div>Ощущается</div>
+        <div>Давление</div>
+        <div>Видимость</div>
+        <div>Осадки</div>
+        <div>Облачность</div>
+        <div>Описание</div>
+      </div>
+      {% for item in results %}
+        <div class="table-row">
+          <div>{{ item.label }}</div>
+          <div>{{ item.temperature_c if item.temperature_c is not none else '—' }} °C</div>
+          <div>{{ item.humidity if item.humidity is not none else '—' }} %</div>
+          <div>{{ item.wind_kph if item.wind_kph is not none else '—' }} км/ч</div>
+          <div>{{ item.wind_gust_kph if item.wind_gust_kph is not none else '—' }} км/ч</div>
+          <div>{{ item.feels_like_c if item.feels_like_c is not none else '—' }} °C</div>
+          <div>{{ item.pressure_hpa if item.pressure_hpa is not none else '—' }} гПа</div>
+          <div>{{ item.visibility_km if item.visibility_km is not none else '—' }} км</div>
+          <div>{{ item.precip_mm if item.precip_mm is not none else '—' }} мм</div>
+          <div>{{ item.cloud_pct if item.cloud_pct is not none else '—' }} %</div>
+          <div>{{ item.condition or '—' }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,26 @@
+﻿{% extends 'weather/base.html' %}
+
+{% block content %}
+  <section class="card">
+    <h1>История запросов</h1>
+    {% if not items %}
+      <p class="muted">Пока нет сохраненных запросов.</p>
+    {% else %}
+      <div class="history">
+        {% for item in items %}
+          <div class="history-item">
+            <div>
+              <strong>{{ item.city }}</strong>
+              <span class="muted">{{ item.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+            </div>
+            <div class="history-metrics">
+              <span>Средняя температура: {{ item.summary.avg_temp if item.summary.avg_temp is not none else '—' }} °C</span>
+              <span>Разброс: {{ item.summary.temp_spread if item.summary.temp_spread is not none else '—' }} °C</span>
+            </div>
+            <a class="button link" href="{{ url('weather:result', query_id=item.id) }}">Открыть</a>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}

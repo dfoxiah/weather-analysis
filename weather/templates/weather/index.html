@@ -1,0 +1,48 @@
+﻿{% extends 'weather/base.html' %}
+
+{% block content %}
+  <section class="card">
+    <h1>Анализ погоды из нескольких источников</h1>
+    <p class="lead">Введите город, выберите источники и получите сравнение параметров.</p>
+
+    <form method="post" class="form">
+      {{ csrf_input }}
+
+      <div class="field">
+        <label for="{{ form.city.id_for_label }}">{{ form.city.label }}</label>
+        {{ form.city.as_widget(attrs={'class': 'input', 'placeholder': 'Например: Казань'}) }}
+        {% if form.city.errors %}
+          <div class="error">{{ form.city.errors[0] }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field">
+        <label>{{ form.sources.label }}</label>
+        <div class="checkboxes">
+          {% for checkbox in form.sources %}
+            <label class="check">
+              {{ checkbox.tag() }}
+              <span>{{ checkbox.choice_label }}</span>
+            </label>
+          {% endfor %}
+        </div>
+        {% if form.sources.errors %}
+          <div class="error">{{ form.sources.errors[0] }}</div>
+        {% endif %}
+      </div>
+
+      <div class="actions">
+        <button class="button" type="submit">Анализировать</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="card secondary">
+    <h2>Что делает сервис</h2>
+    <ul class="list">
+      <li>Собирает данные текущей погоды из разных API.</li>
+      <li>Сравнивает температуру, влажность и ветер.</li>
+      <li>Сохраняет запросы в базе SQLite.</li>
+    </ul>
+  </section>
+{% endblock %}
