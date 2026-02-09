@@ -9,7 +9,9 @@
 - Формы через Django Forms.
 - Маршрутизация через Django `urls.py` (аналог BluePrint в Django).
 - Flash-сообщения через Django Messages.
-- Два источника погоды: Open‑Meteo и wttr.in.
+- Поиск города в шапке и переход на главную по клику на название.
+- Несколько источников погоды: Open‑Meteo, wttr.in, met.no.
+- Расширенные параметры: ощущается как, давление, видимость, осадки, порывы, облачность.
 
 ## Быстрый старт (локально)
 ```powershell
@@ -27,6 +29,9 @@ python manage.py runserver
 - `SECRET_KEY` — секрет для сессий.
 - `DEBUG` — `1` или `0`.
 - `ALLOWED_HOSTS` — список доменов через запятую.
+- `WEATHER_TIMEOUT_SECONDS` — таймаут запросов к API (в секундах).
+
+> Примечание: для Python 3.13 требуется SQLAlchemy `>= 2.0.36`.
 
 ## Deploy на PythonAnywhere (бесплатно)
 1. Зарегистрируйтесь на pythonanywhere.com.
