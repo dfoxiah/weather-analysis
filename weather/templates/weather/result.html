@@ -4,6 +4,22 @@
   <section class="card">
     <h1>Результат анализа</h1>
     <p class="muted">Город: {{ query.city }} · {{ query.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+    {% if admin_view %}
+      <div class="admin-meta">
+        <span class="muted">ID: #{{ query.id }}</span>
+        <span class="muted">Session: {{ query.session_id or '—' }}</span>
+      </div>
+      {% if query.sources_labels %}
+        <div class="chip-group">
+          {% for label in query.sources_labels %}
+            <span class="chip">{{ label }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+      <div class="actions">
+        <a class="button link" href="{{ url('weather:admin') }}">К админке</a>
+      </div>
+    {% endif %}
 
     <div class="summary">
       <div>

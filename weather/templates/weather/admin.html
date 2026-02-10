@@ -1,0 +1,135 @@
+{% extends 'weather/base.html' %}
+
+{% block content %}
+  <section class="card">
+    <div class="admin-head">
+      <div>
+        <h1>Админка</h1>
+        <p class="muted">Быстрый обзор запросов и управление историей.</p>
+      </div>
+      {% if is_admin %}
+        <form method="post">
+          {{ csrf_input }}
+          <input type="hidden" name="action" value="logout" />
+          <button class="button link" type="submit">Выйти</button>
+        </form>
+      {% endif %}
+    </div>
+
+    {% if not admin_enabled %}
+      <p class="muted">Админка отключена — задайте переменную ADMIN_PASSWORD.</p>
+    {% elif not is_admin %}
+      <form method="post" class="form admin-login">
+        {{ csrf_input }}
+        <input type="hidden" name="action" value="login" />
+        <div class="field">
+          <label>Логин</label>
+          <input class="input" type="text" name="username" autocomplete="username" value="{{ login_username }}" />
+        </div>
+        <div class="field">
+          <label>Пароль</label>
+          <input class="input" type="password" name="password" autocomplete="current-password" />
+        </div>
+        <div class="actions">
+          <button class="button" type="submit">Войти</button>
+        </div>
+      </form>
+    {% else %}
+      <div class="admin-stats">
+        <div class="stat">
+          <span>Всего запросов</span>
+          <strong>{{ stats.total_queries }}</strong>
+        </div>
+        <div class="stat">
+          <span>Всего результатов</span>
+          <strong>{{ stats.total_results }}</strong>
+        </div>
+        <div class="stat">
+          <span>Уникальных городов</span>
+          <strong>{{ stats.unique_cities }}</strong>
+        </div>
+        <div class="stat">
+          <span>Последний запрос</span>
+          <strong>{{ stats.latest_at.strftime('%d.%m.%Y %H:%M') if stats.latest_at else '—' }}</strong>
+        </div>
+      </div>
+
+      <form method="get" class="admin-filters">
+        <input class="input" type="text" name="city" placeholder="Город" value="{{ filters.city }}" />
+        <select class="input" name="source">
+          <option value="">Все источники</option>
+          {% for src in sources_options %}
+            <option value="{{ src.key }}" {% if filters.source == src.key %}selected{% endif %}>{{ src.label }}</option>
+          {% endfor %}
+        </select>
+        <input class="input" type="text" name="session_id" placeholder="Session id" value="{{ filters.session_id }}" />
+        <select class="input" name="limit">
+          {% for item in limit_options %}
+            <option value="{{ item }}" {% if filters.limit == item %}selected{% endif %}>Показать {{ item }}</option>
+          {% endfor %}
+        </select>
+        <button class="button small" type="submit">Применить</button>
+        <a class="button link small" href="{{ url('weather:admin') }}">Сбросить</a>
+      </form>
+
+      <p class="muted">Найдено: {{ stats.filtered_total }} из {{ stats.total_queries }}</p>
+
+      {% if items %}
+        <div class="admin-table">
+          <div class="admin-row head">
+            <div>ID</div>
+            <div>Город</div>
+            <div>Источники</div>
+            <div>Метрики</div>
+            <div>Дата</div>
+            <div>Session</div>
+            <div>Действия</div>
+          </div>
+          {% for item in items %}
+            <div class="admin-row">
+              <div>#{{ item.id }}</div>
+              <div>
+                <strong>{{ item.city }}</strong>
+              </div>
+              <div>
+                <div class="chip-group">
+                  {% if item.sources_labels %}
+                    {% for label in item.sources_labels %}
+                      <span class="chip">{{ label }}</span>
+                    {% endfor %}
+                  {% else %}
+                    <span class="muted">—</span>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="admin-metrics">
+                <span>avg: {{ item.summary.avg_temp if item.summary.avg_temp is not none else '—' }} °C</span>
+                <span>spread: {{ item.summary.temp_spread if item.summary.temp_spread is not none else '—' }} °C</span>
+                <span>rows: {{ item.result_count }}</span>
+              </div>
+              <div>{{ item.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
+              <div class="muted">{{ item.session_id or '—' }}</div>
+              <div class="admin-actions">
+                <a class="button link small" href="{{ url('weather:admin_detail', query_id=item.id) }}">Открыть</a>
+                <form method="post">
+                  {{ csrf_input }}
+                  <input type="hidden" name="action" value="delete" />
+                  <input type="hidden" name="query_id" value="{{ item.id }}" />
+                  <button class="button small" type="submit" onclick="return confirm('Удалить запрос #{{ item.id }}?')">Удалить</button>
+                </form>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted">Запросов не найдено.</p>
+      {% endif %}
+
+      <form method="post" class="admin-danger">
+        {{ csrf_input }}
+        <input type="hidden" name="action" value="purge" />
+        <button class="button" type="submit" onclick="return confirm('Удалить всю историю?')">Очистить все</button>
+      </form>
+    {% endif %}
+  </section>
+{% endblock %}

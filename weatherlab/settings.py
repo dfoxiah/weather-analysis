@@ -74,6 +74,9 @@ DATABASES = {
 
 SQLALCHEMY_DATABASE_URL = f"sqlite:///{DATABASES['default']['NAME']}"
 WEATHER_TIMEOUT_SECONDS = int(os.environ.get("WEATHER_TIMEOUT_SECONDS", "6"))
+ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin")
+ADMIN_PATH = os.environ.get("ADMIN_PATH", "control")
 
 AUTH_PASSWORD_VALIDATORS = []
 
